@@ -112,7 +112,6 @@ Before the rearrangement process finishes, update your simulation so that the El
 class Day5():
     def __init__(self, input: str) -> None:
         self.crates, self.instructions = self.parse_input(input)
-        # print(self.crates, self.instructions, sep="\n")
 
     def parse_input(self, input: str) -> tuple[list]:
         input_l = input.split("\n\n")
