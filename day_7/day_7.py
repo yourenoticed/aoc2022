@@ -85,25 +85,42 @@ Find all of the directories with a total size of at most 100000. What is the sum
 
 class Day6():
     def __init__(self, input: str) -> None:
-        pass
+        self.root = Dir("/")
+        self.parse_input(input)
+        print(len(self.root.files))
 
     def parse_input(self, input: str):
-        pass
-
-
-class Dir():
-    def __init__(self, name: str, files=list()) -> None:
-        self.name = name
-        self.files = files
-
-    def size(self):
-        size = 0
-        for file in self.files:
-            if type(file) == Dir:
-                size += file.size()
-            elif type(file) == File:
-                size += file.size
-        return size
+        input_l = input.split("\n")
+        nav = [self.root]
+        i = 1
+        while i < len(input_l):
+            d = nav[-1]
+            if "$ cd" in input_l[i]:
+                if ".." == input_l[i].split()[-1]:
+                    nav.pop()
+                    d = nav[-1]
+                else:
+                    curr_dir = d.find_dir(input_l[i].split()[-1])
+                    # if curr_dir:
+                    nav.append(curr_dir)
+                    d = nav[-1]
+                i += 1
+            elif input_l[i] == "$ ls":
+                # d = nav[-1]
+                i += 1
+                while i < len(input_l) and "$" != input_l[i][0]:
+                    attributes = input_l[i].split()
+                    if attributes[0] == "dir":
+                        curr_dir = Dir(attributes[-1])
+                        if not curr_dir not in d.files:
+                            d.files.append(curr_dir)
+                    else:
+                        curr_file = File(attributes[-1], int(attributes[0]))
+                        if curr_file not in d.files:
+                            d.files.append(curr_file)
+                    i += 1
+            else:
+                break
 
 
 class File():
@@ -112,7 +129,43 @@ class File():
         self.size = size
 
 
+class Dir():
+    def __init__(self, name: str, files=list(), size=None) -> None:
+        self.name = name
+        self.files = files
+        self.size = size
+
+    def count_size(self):
+        size = 0
+        for file in self.files:
+            if type(file) == Dir:
+                size += file.count_size()
+            elif type(file) == File:
+                size += file.size
+        return size
+
+    def get_files_names(self) -> list[str]:
+        files = [x.name for x in self.files]
+        return files
+
+    def find_file(self, file_name: str) -> File:
+        if not self.files:
+            return None
+        for file in self.files:
+            if file_name == file.name:
+                return file
+        return None
+
+    def find_dir(self, dir_name: str):
+        if not self.files:
+            return None
+        for file in self.files:
+            if dir_name == file.name and type(file) == Dir:
+                return file
+        return None
+
+
 if __name__ == "__main__":
-    with open("day_6_input.txt", "r") as file:
+    with open("day_7_input.txt", "r") as file:
         input = file.read()
     task = Day6(input)
