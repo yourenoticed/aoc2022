@@ -140,10 +140,8 @@ class Day8():
     def visible_trees(self, line: list[int]) -> int:
         visible_trees = 0
         for i in range(1, len(line)):
-            if line[i] < line[0]:
-                visible_trees += 1
-            else:
-                visible_trees += 1
+            visible_trees += 1
+            if line[i] >= line[0]:
                 return visible_trees
         return visible_trees
 

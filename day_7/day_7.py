@@ -65,6 +65,15 @@ Given the commands and output in the example above, you can determine that the f
     - d.ext (file, size=5626152)
     - k (file, size=7214296)
 
+
+5536913896842784
+
+10/28
+
+171
+
+
+
 Here, there are four directories: / (the outermost directory), a and d (which are in /), and e (which is in a). These directories also contain files of various sizes.
 
 Since the disk is full, your first step should probably be to find directories that are good candidates for deletion. To do this, you need to determine the total size of each directory. The total size of a directory is the sum of the sizes of the files it contains, directly or indirectly. (Directories themselves do not count as having any intrinsic size.)
