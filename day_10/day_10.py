@@ -216,27 +216,30 @@ class Day10():
     def sum_of_signal_strengths(self) -> int:
         check_results = []
         curr_adds = []
-        cycle = 0
+        x = 1
+        cycle = 1
         for command in self.input:
-            if self.time_to_check(cycle):
-                check_results.append(
-                    self.signal_strength(cycle, sum(curr_adds) + 1))
-                curr_adds = []
             if type(command) == str:
+                if self.time_to_check(cycle):
+                    x += sum(curr_adds)
+                    curr_adds.clear()
+                    check_results.append(
+                        self.signal_strength(cycle, x))
                 cycle += 1
             else:
-                curr_adds.append(command)
                 for _ in range(2):
                     if self.time_to_check(cycle):
-                        print(curr_adds)
+                        x += sum(curr_adds)
+                        curr_adds.clear()
                         check_results.append(
-                            self.signal_strength(cycle, sum(curr_adds) + 1))
-                        curr_adds = []
+                            self.signal_strength(cycle, x))
                     cycle += 1
+                curr_adds.append(command)
+
         return sum(check_results)
 
     def signal_strength(self, cycle: int, x: int) -> int:
-        print(f"x:{x}, cycle: {cycle}")
+        # print(f"x:{x}, cycle: {cycle}")
         return cycle * x
 
     def time_to_check(self, cycle: int) -> bool:
@@ -244,7 +247,7 @@ class Day10():
 
 
 if __name__ == "__main__":
-    with open("test_input.txt", "r") as file:
+    with open("day_10_input.txt", "r") as file:
         input = file.read()
     task = Day10(input)
     print(task.task_1())
