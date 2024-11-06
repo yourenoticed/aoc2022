@@ -372,28 +372,34 @@ class Day10():
     def draw(self) -> None:
         x = 1
         cycle = 1
-        curr_line = []
+        curr_line = ["." for _ in range(40)]
         for command in self.input:
             if type(command) == str:
-                if len(curr_line) >= 40:
-                    print(curr_line)
-                    curr_line.clear()
-                curr_line.append(self.draw_pixel(x, curr_line))
+                if cycle % 40 == 0:
+                    print("".join(curr_line))
+                    curr_line = ["." for _ in range(40)]
+                curr_line[cycle % 40] = self.draw_pixel(x, cycle)
                 cycle += 1
             else:
                 for _ in range(2):
-                    if len(curr_line) >= 40:
-                        print(curr_line)
-                        curr_line.clear()
-                    curr_line.append(self.draw_pixel(x, curr_line))
+                    if cycle % 40 == 0:
+                        print("".join(curr_line))
+                        curr_line = ["." for _ in range(40)]
+                    curr_line[cycle % 40] = self.draw_pixel(x, cycle)
                     cycle += 1
+                x += command
 
-    def draw_pixel(self, x: int, line: list[str]) -> str:
-        if len(line)
+    def draw_pixel(self, x: int, cycle: int) -> str:
+        cycle %= 40
+        if cycle in range(x, x + 3):
+            return "#"
+        if x <= 1 and cycle in range(1, 4):
+            return "#"
+        return "."
 
 
 if __name__ == "__main__":
     with open("day_10_input.txt", "r") as file:
         input = file.read()
     task = Day10(input)
-    print(task.task_1())
+    print(task.draw())
