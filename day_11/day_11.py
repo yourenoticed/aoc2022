@@ -223,27 +223,29 @@ from math import floor
 class Monkey():
     def __init__(self, start_items: list[int], operation: str, op_1_val: int | str, op_2_val: int | str, divisible_by: int, if_yes: int, if_no: int) -> None:
         self.items = start_items
-        self.items_count = len(start_items)
+        self.items_count = len(self.items)
         self.operation = operation
         self.op_1_val = op_1_val
         self.op_2_val = op_2_val
         self.divisible_by = divisible_by
         self.if_yes = if_yes
         self.if_no = if_no
+        self.ops_done = 0
+
+    def set_items_count(self) -> int:
+        self.items_count = len(self.items)
+        return self.items_count
 
     def set_val(self, val: str | int, item: int) -> int | None:
         if type(val) == str:
             return item
         elif type(val) == int:
             return val
-        return None
-
-    def do_operations(self)
 
     def do_operation(self) -> tuple[int] | None:
         if len(self.items) > 0:
-            item = self.items[0]
-            self.items.pop(0)
+            item = self.items.pop(0)
+            # print(f"item: {item}")
             op_1_val = self.set_val(self.op_1_val, item)
             op_2_val = self.set_val(self.op_2_val, item)
             match self.operation:
@@ -257,7 +259,9 @@ class Monkey():
                     item = op_1_val / op_2_val
             item = floor(item / 3)
             if item % self.divisible_by == 0:
+                # print(self.if_yes, item, sep=", ", end="\n\n")
                 return (self.if_yes, item)
+            # print(self.if_no, item, sep=", ", end="\n\n")
             return (self.if_no, item)
         return None
 
@@ -294,7 +298,7 @@ class Monkey_Parser():
 
     def parse_items(self, line: str) -> list[int]:
         line = line.replace(",", "")
-        return [int(item) for item in line[2:] if item.isdigit()]
+        return [int(item) for item in line.split()[2:] if item.isdigit()]
 
     def parse_operation(self, line: str) -> tuple[int | str]:
         ops = []
@@ -309,15 +313,35 @@ class Monkey_Parser():
 class Day11():
     def __init__(self, input: str) -> None:
         parser = Monkey_Parser(input)
-        self.input = parser.parse_monkeys()
+        self.monkeys = parser.parse_monkeys()
 
-    def task_1(self) -> None:
-        for monkey in self.input:
-            i, val = monkey.do_operation()
+    def task_1(self, rounds: int) -> int:
+        return self.find_top_2_monkeys(rounds)
+
+    def find_top_2_monkeys(self, rounds: int) -> int:
+        passes = self.count_operations(rounds)
+        top_1 = passes[0]
+        top_1_i = 0
+        for i, score in enumerate(passes):
+            if top_1 < score:
+                top_1 = score
+                top_1_i = i
+        passes.pop(top_1_i)
+        top_2 = max(passes)
+        return top_1 * top_2
+
+    def count_operations(self, rounds: int) -> list[int]:
+        for _ in range(rounds):
+            for monkey in self.monkeys:
+                for _ in range(len(monkey.items)):
+                    i, item = monkey.do_operation()
+                    monkey.ops_done += 1
+                    self.monkeys[i].items.append(item)
+        return [monkey.ops_done for monkey in self.monkeys]
 
 
 if __name__ == "__main__":
-    with open("test_input.txt", "r") as file:
+    with open("day_11_input.txt", "r") as file:
         input = file.read()
     day_11 = Day11(input)
-    print(day_11.task_1())
+    print(day_11.task_1(20))
