@@ -39,6 +39,7 @@ class Day12():
         return [[c for c in line] for line in input]
 
     def task_1(self):
+        curr_letter = self.input[start_pos[0]][self]
         pass
 
     def find(self, matrix: list[list], target) -> tuple[int]:
@@ -48,7 +49,11 @@ class Day12():
                     return (i, j)
 
     def can_climb(self, start: str, destination: str) -> bool:
-        return ord(destination) - ord(start) == 0
+        if start == "S":
+            return destination == "a" or destination == "E"
+        if destination == "E":
+            return start == "z"
+        return ord(destination) - ord(start) >= 0 and ord(destination) - ord(start) < 2
 
     def check_sides(self, hill_pos: tuple[int]) -> list[tuple[int]]:
         sides = []
